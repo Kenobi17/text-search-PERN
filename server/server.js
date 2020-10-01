@@ -7,8 +7,19 @@ const express = require("express"),
 
 // MIDDLEWARE
 app.use(cors());
-app.use(express.json());
 //ROUTES
+app.get("/users", async (req, res) => {
+  try {
+    const name = req.query.name || "";
+    const users = await db.query(
+      "SELECT * FROM users WHERE first_name || ' ' || last_name ILIKE $1",
+      [`%${name}%`]
+    );
+    res.json(users.rows);
+  } catch (error) {
+    console.error(error.message);
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server up running at http://localhost:${port}`);
